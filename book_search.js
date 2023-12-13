@@ -22,11 +22,19 @@
     /** You will need to implement your search and 
      * return the appropriate object here. */
     
+    var search; // 
+    
+    // loop through given JSON input to find if searchTerm is in it.
+    /*for (var i = 0; i < scannedTextObj.Text.length; i++) {
+
+    }*/
 
     var result = {
         "SearchTerm": "",
         "Results": []
     };
+
+    result.SearchTerm = searchTerm;
     
     return result; 
 }
@@ -102,4 +110,15 @@ if (test2result.Results.length == 1) {
     console.log("FAIL: Test 2");
     console.log("Expected:", twentyLeaguesOut.Results.length);
     console.log("Received:", test2result.Results.length);
+}
+
+/** my tests **/
+// negative tests - should not return any matches
+const test3result = findSearchTermInBooks("Ness", twentyLeaguesIn);
+if (JSON.stringify(twentyLeaguesOut) === JSON.stringify(test3result)) {
+    console.log("PASS: Test 3"); // not a good test yet
+} else {
+    console.log("FAIL: Test 3");
+    console.log("Expected:", twentyLeaguesOut);
+    console.log("Received:", test3result)
 }
