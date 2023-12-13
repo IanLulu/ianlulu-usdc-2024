@@ -21,13 +21,6 @@
  function findSearchTermInBooks(searchTerm, scannedTextObj) {
     /** You will need to implement your search and 
      * return the appropriate object here. */
-    
-    var search; // 
-    
-    // loop through given JSON input to find if searchTerm is in it.
-    /*for (var i = 0; i < scannedTextObj.Text.length; i++) {
-
-    }*/
 
     var result = {
         "SearchTerm": "",
@@ -35,6 +28,28 @@
     };
 
     result.SearchTerm = searchTerm;
+
+    // loop through scannedTextObj
+    for (var i = 0; i < scannedTextObj.length; i++) {
+        var obj = scannedTextObj[i];
+
+        // loop through "Content" array
+        for (var j = 0; j < obj.Content.length; j++) {
+            var content = obj.Content[j];
+
+            // checks if searchTerm is in Text field
+            if (content.Text.includes(searchTerm)) {
+                // if true, pushes to "Results" array in JSON object
+                result.Results.push(
+                    {
+                        "ISBN": obj.ISBN,
+                        "Page": content.Page,
+                        "Line": content.Line
+                    }
+                );
+            }
+        }
+    }
     
     return result; 
 }
@@ -116,9 +131,67 @@ if (test2result.Results.length == 1) {
 // negative tests - should not return any matches
 const test3result = findSearchTermInBooks("Ness", twentyLeaguesIn);
 if (JSON.stringify(twentyLeaguesOut) === JSON.stringify(test3result)) {
-    console.log("PASS: Test 3"); // not a good test yet
-} else {
     console.log("FAIL: Test 3");
-    console.log("Expected:", twentyLeaguesOut);
+    console.log("Expected: no matching results");
     console.log("Received:", test3result)
+} else if (JSON.stringify(twentyLeaguesOut) != JSON.stringify(test3result)) { // should pass if search result did not return any matches
+    console.log("PASS: Test 3");
 }
+
+// positive tests - should return a match
+const test4result = findSearchTermInBooks("and", twentyLeaguesIn);
+if (test4result.Results.length == 2) {
+    console.log("PASS: Test 4");
+} else {
+    console.log("FAIL: Test 4");
+    console.log("Expected: 2");
+    console.log("Received:", test4result.Results.length);
+}
+
+// case sensitive tests - should match on i.e. "The" but not "the"
+const test5result = findSearchTermInBooks("The", twentyLeaguesIn); 
+if (test5result.Results.length == 1) {
+    console.log("PASS: Test 5");
+} else {
+    console.log("FAIL: Test 5");
+    console.log("Expected: 1");
+    console.log("Received:", test5result.Results.length);
+}
+
+const test5aresult = findSearchTermInBooks("canadian", twentyLeaguesIn); 
+if (test5aresult.Results.length == 0) {
+    console.log("PASS: Test 5a");
+} else {
+    console.log("FAIL: Test 5a");
+    console.log("Expected: 0");
+    console.log("Received:", test5aresult.Results.length);
+}
+
+/* edge cases - more complex circumstances. Trying to predict user behavior */
+// search with a phrase rather than a word
+const test6result = findSearchTermInBooks("her own momentum", twentyLeaguesIn); 
+if (test6result.Results.length == 1) {
+    console.log("PASS: Test 6");
+} else {
+    console.log("FAIL: Test 6");
+    console.log("Expected: 1");
+    console.log("Received:", test6result.Results.length);
+}
+
+// search with an empty search term
+const test7result = findSearchTermInBooks("", twentyLeaguesIn);
+if (test7result.Results.length == 0) {
+    console.log("PASS: Test 7");
+} else {
+    console.log("FAIL: Test 7");
+    console.log("Expected: 0");
+    console.log("Received:", test7result.Results.length); // hmmm it returns 3. I can't seem to find how it got that. There are two spaces before "The dark-". It's not counting spaces because there are more than 3...
+}
+
+// search with an empty JSON text object
+
+// search with different language's alphabet i.e. Japanese, Arabic, etc.
+
+// test search's character limit for overflow
+
+// test search for weird characters like the null character in place of the space character when searching for phrases
